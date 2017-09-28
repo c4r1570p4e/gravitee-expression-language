@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.gravitee.el.function;
+package io.gravitee.el.spel.function;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
@@ -33,7 +33,6 @@ import java.io.InputStream;
  * @author GraviteeSource Team
  */
 public final class JsonPathFunction {
-
 
     private static final Configuration CONFIGURATION;
 

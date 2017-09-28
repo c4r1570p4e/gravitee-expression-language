@@ -35,6 +35,12 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>io.gravitee.common</groupId>
+            <artifactId>gravitee-common</artifactId>
+            <version>${gravitee-common.version}</version>
+        </dependency>
+
         <!-- Json path -->
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
@@ -78,13 +84,6 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>${mockito.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>io.gravitee.common</groupId>
-            <artifactId>gravitee-common</artifactId>
-            <version>${gravitee-common.version}</version>
             <scope>test</scope>
         </dependency>
 

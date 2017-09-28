@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.gravitee.el;
+package io.gravitee.el.spel;
 
-import io.gravitee.el.function.JsonPathFunction;
+import io.gravitee.el.TemplateContext;
 import org.springframework.beans.BeanUtils;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import io.gravitee.el.spel.function.JsonPathFunction;
 
 /**
  * @author David BRASSELY (david at gravitee.io)
  * @author GraviteeSource Team
  */
-public class SpelTemplateContext {
+public class SpelTemplateContext implements TemplateContext {
 
     private final StandardEvaluationContext context = new StandardEvaluationContext();
 
@@ -33,10 +34,12 @@ public class SpelTemplateContext {
                 BeanUtils.resolveSignature("evaluate", JsonPathFunction.class));
     }
 
+    @Override
     public void setVariable(String name, Object value) {
         context.setVariable(name, value);
     }
 
+    @Override
     public Object lookupVariable(String name) {
         return context.lookupVariable(name);
     }

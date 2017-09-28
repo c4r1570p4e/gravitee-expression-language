@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.gravitee.el;
+package io.gravitee.el.spel;
 
 import io.gravitee.common.http.HttpHeaders;
 import io.gravitee.common.util.LinkedMultiValueMap;
 import io.gravitee.common.util.MultiValueMap;
+import io.gravitee.el.TemplateEngine;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,7 +63,7 @@ public class SpelTemplateEngineTest {
         when(request.headers()).thenReturn(headers);
         when(request.path()).thenReturn("/stores/99/products/123456");
 
-        SpelTemplateEngine engine = new SpelTemplateEngine();
+        TemplateEngine engine = TemplateEngine.templateEngine();
         engine.getTemplateContext().setVariable("request", new EvaluableRequest(request));
 
         String value = engine.convert("{#request.headers['X-Gravitee-Endpoint']}");
@@ -77,7 +78,7 @@ public class SpelTemplateEngineTest {
         when(request.parameters()).thenReturn(parameters);
         when(request.path()).thenReturn("/stores/99/products/123456");
 
-        SpelTemplateEngine engine = new SpelTemplateEngine();
+        TemplateEngine engine = TemplateEngine.templateEngine();
         engine.getTemplateContext().setVariable("request", new EvaluableRequest(request));
 
         String value = engine.convert("{#request.params['param']}");
@@ -92,7 +93,7 @@ public class SpelTemplateEngineTest {
         when(request.parameters()).thenReturn(parameters);
         when(request.path()).thenReturn("/stores/99/products/123456");
 
-        SpelTemplateEngine engine = new SpelTemplateEngine();
+        TemplateEngine engine = TemplateEngine.templateEngine();
         engine.getTemplateContext().setVariable("request", new EvaluableRequest(request));
 
         String value = engine.convert("{#request.params['param'][1]}");
@@ -115,7 +116,7 @@ public class SpelTemplateEngineTest {
         properties.put("name_123", "Doe");
         properties.put("firstname_123", "John");
 
-        SpelTemplateEngine engine = new SpelTemplateEngine();
+        TemplateEngine engine = TemplateEngine.templateEngine();
         engine.getTemplateContext().setVariable("request", new EvaluableRequest(request));
         engine.getTemplateContext().setVariable("properties", properties);
 
@@ -139,7 +140,7 @@ public class SpelTemplateEngineTest {
         properties.put("name_123", "Doe");
         properties.put("firstname_123", "John");
 
-        SpelTemplateEngine engine = new SpelTemplateEngine();
+        TemplateEngine engine = TemplateEngine.templateEngine();
         engine.getTemplateContext().setVariable("request", new EvaluableRequest(request));
         engine.getTemplateContext().setVariable("properties", properties);
 
@@ -150,7 +151,7 @@ public class SpelTemplateEngineTest {
 
     @Test
     public void shouldCallRandomFunction() {
-        SpelTemplateEngine engine = new SpelTemplateEngine();
+        TemplateEngine engine = TemplateEngine.templateEngine();
         String content = "age: {(T(java.lang.Math).random() * 60).intValue()}";
         String value = engine.convert(content);
         Assert.assertNotNull(value);
@@ -161,7 +162,7 @@ public class SpelTemplateEngineTest {
         EvaluableRequest req = Mockito.mock(EvaluableRequest.class);
         when(req.getContent()).thenReturn("{ \"lastname\": \"DOE\", \"firstname\": \"JOHN\", \"age\": 35 }");
 
-        SpelTemplateEngine engine = new SpelTemplateEngine();
+        TemplateEngine engine = TemplateEngine.templateEngine();
         engine.getTemplateContext().setVariable("request", req);
 
         String content = "{#jsonPath(#request.content, '$.lastname')}";
@@ -198,7 +199,7 @@ public class SpelTemplateEngineTest {
     @Test
     public void shouldJsonPathFunctionForBoolean() {
 
-        SpelTemplateEngine engine = new SpelTemplateEngine();
+        TemplateEngine engine = TemplateEngine.templateEngine();
         engine.getTemplateContext().setVariable("profile", "{ \"lastname\": \"DOE\", \"firstname\": \"JOHN\", \"age\": 35 }");
 
         String content = "{#jsonPath(#profile, '$.identity_provider_id') == 'idp_6'}";
@@ -211,29 +212,6 @@ public class SpelTemplateEngineTest {
 
         content = "{#jsonPath(#profile, '$.lastname') == 'DONE'}";
         result = engine.getValue(content , boolean.class);
-        Assert.assertFalse(result);
-
-    }
-
-    @Test
-    public void shouldJsonPathFunctionWithExpressionForBoolean() {
-
-        SpelTemplateEngine engine = new SpelTemplateEngine();
-        engine.getTemplateContext().setVariable("profile", "{ \"lastname\": \"DOE\", \"firstname\": \"JOHN\", \"age\": 35 }");
-
-        String content = "{#jsonPath(#profile, '$.identity_provider_id') == 'idp_6'}";
-        Expression expression = engine.parseExpression(content);
-        boolean result = engine.getValue(expression , boolean.class);
-        Assert.assertFalse(result);
-
-        content = "{#jsonPath(#profile, '$.lastname') == 'DOE'}";
-        expression = engine.parseExpression(content);
-        result = engine.getValue(expression , boolean.class);
-        Assert.assertTrue(result);
-
-        content = "{#jsonPath(#profile, '$.lastname') == 'DONE'}";
-        expression = engine.parseExpression(content);
-        result = engine.getValue(expression , boolean.class);
         Assert.assertFalse(result);
 
     }

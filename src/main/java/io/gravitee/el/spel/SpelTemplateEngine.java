@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.gravitee.el;
+package io.gravitee.el.spel;
 
+import io.gravitee.el.TemplateContext;
+import io.gravitee.el.TemplateEngine;
 import org.springframework.expression.Expression;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 
@@ -22,32 +24,35 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
  * @author David BRASSELY (david.brassely at graviteesource.com)
  * @author GraviteeSource Team
  */
-public class SpelTemplateEngine {
+public class SpelTemplateEngine implements TemplateEngine {
 
     private static final String EXPRESSION_REGEX = "\\{([^#|T|(])";
     private static final String EXPRESSION_REGEX_SUBSTITUTE = "{'{'}$1";
 
     private final SpelTemplateContext templateContext = new SpelTemplateContext();
 
+    @Override
     public String convert(String expression) {
         return getValue(expression, String.class);
     }
 
-    public Expression parseExpression(String expression) {
+    private Expression parseExpression(String expression) {
         // Escape sequence
         final String replaced = expression.replaceAll(EXPRESSION_REGEX, EXPRESSION_REGEX_SUBSTITUTE);
         return new SpelExpressionParser().parseExpression(replaced, new TemplateParserContext());
     }
 
-    public <T> T getValue(Expression expression, Class<T> clazz) {
-        return expression.getValue(getTemplateContext().getContext(), clazz);
+    private <T> T getValue(Expression expression, Class<T> clazz) {
+        return expression.getValue(templateContext.getContext(), clazz);
     }
 
+    @Override
     public <T> T getValue(String expression, Class<T> clazz) {
         return getValue(parseExpression(expression), clazz);
     }
 
-    public SpelTemplateContext getTemplateContext() {
+    @Override
+    public TemplateContext getTemplateContext() {
         return templateContext;
     }
 }
